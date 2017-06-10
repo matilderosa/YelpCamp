@@ -14,4 +14,9 @@
     display: inline;
 }
 
+/* Google Map styles */
+#map {
+	height: 400px;
+	width: 100%;
+}
 

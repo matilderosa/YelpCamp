@@ -1,7 +1,8 @@
 var express    = require("express"),
     router     = express.Router(),
     Campground = require("../models/campground"),
-    middleware = require("../middleware");
+    middleware = require("../middleware"),
+    geocoder   = require('geocoder');
 
 // INDEX ROUT - Show all campgrounds
 router.get("/", function(req, res){
@@ -26,8 +27,12 @@ router.post("/", middleware.isLoggedIn, function(req, res){
         author        = {
             id: req.user._id,
             username: req.user.username
-        },
-        newCamp       = {name: name, image: image, price: price, description: description, author: author};
+        };
+geocoder.geocode(req.body.location, function (err, data) {
+    var lat = data.results[0].geometry.location.lat;
+    var lng = data.results[0].geometry.location.lng;
+    var location = data.results[0].formatted_address;
+    var newCamp = {name: name, image: image, price: price, description: description, author: author, location: location, lat: lat, lng: lng};
         //Create  a new campground and save to the DB
         Campground.create(newCamp, function(err, newlyCreated){
             if(err){
@@ -36,7 +41,8 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                 //redirect to the campgrounds page
                 res.redirect("/campgrounds");
             }
-        })
+        });
+});
 });
 
 // NEW ROUTE - show form to create new route
