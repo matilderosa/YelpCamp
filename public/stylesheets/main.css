@@ -4,6 +4,8 @@
 
 .thumbnail {
     padding: 0;
+
+    border: none;
 }
 
 .thumbnail .camption-full {
@@ -18,5 +20,12 @@
 #map {
 	height: 400px;
 	width: 100%;
+}
+
+@media screen and (min-width: 996px) {
+    .gallery img {
+        height: 200px;
+        width: auto;
+    }
 }
 

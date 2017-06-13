@@ -3,18 +3,41 @@ var express    = require("express"),
     Campground = require("../models/campground"),
     middleware = require("../middleware"),
     geocoder   = require('geocoder');
+    
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 // INDEX ROUT - Show all campgrounds
 router.get("/", function(req, res){
+    var noMatch = " ";
+    if (req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Campground.find({location: regex}, function(err, allCampgrounds){
+            if(err){
+            console.log(err);
+        } else {
+            var noMatch = " ";
+            console.log(noMatch);
+            if (allCampgrounds.length < 1) {
+                var noMatch = "No campgrounds match the query, please try again."
+            }
+            //Take all the campgrounds from the DB to the campgrounds.ejs file
+            
+              res.render("campgrounds/index", {campgrounds: allCampgrounds, noMatch: noMatch});
+        }
+    });
+    } else {
     //Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds){
         if(err){
             console.log(err);
         } else {
             //Take all the campgrounds from the DB to the campgrounds.ejs file
-              res.render("campgrounds/index", {campgrounds: allCampgrounds});  
+              res.render("campgrounds/index", {campgrounds: allCampgrounds, noMatch: noMatch});  
         }
     });
+    }
 });
 
 
@@ -92,6 +115,7 @@ router.delete("/:id", middleware.checkCampgroundOwenership, function(req, res){
         }
     });
 });
+
 
 
 module.exports = router;
