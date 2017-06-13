@@ -16,6 +16,7 @@ var campgroundRoutes = require("./routes/campgrounds"),
     commentRoutes    = require("./routes/comments"),
     authRoutes       = require("./routes/index");
 
+
 mongoose.connect(process.env.DATABASEURL);    
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
